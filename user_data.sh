@@ -4,4 +4,4 @@ amazon-linux-extras install -y nginx1
 systemctl enable nginx
 systemctl start nginx
 
-echo "<h1>Hello from NGINX via ALB!</h1>" > /usr/share/nginx/html/index.html
+echo "<h1>Protected with Cloud Rewind</h1>" > /usr/share/nginx/html/index.html
