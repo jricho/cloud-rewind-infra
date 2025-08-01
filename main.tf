@@ -190,7 +190,7 @@ resource "aws_db_instance" "postgres" {
   identifier              = "app-db"
   allocated_storage       = 20
   engine                  = "postgres"
-  engine_version          = "14.3"
+  engine_version          = "16.3"
   instance_class          = "db.t3.micro"
   username                = "admin"
   password                = "examplepassword"
