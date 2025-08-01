@@ -22,6 +22,28 @@ resource "aws_subnet" "public_b" {
   availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
 }
+# Private subnets for RDS
+
+# --- Private Subnets for RDS (no public IPs, no route to IGW) ---
+resource "aws_subnet" "private_a" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.11.0/24"
+  availability_zone = data.aws_availability_zones.available.names[0]
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "private-a"
+  }
+}
+
+resource "aws_subnet" "private_b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.12.0/24"
+  availability_zone = data.aws_availability_zones.available.names[1]
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "private-b"
+  }
+}
 
 # Get availability zones
 data "aws_availability_zones" "available" {}
@@ -161,7 +183,7 @@ resource "aws_lb_target_group_attachment" "web_instance" {
 # --- RDS PostgreSQL (uses subnet group with 2 AZs) ---
 resource "aws_db_subnet_group" "main" {
   name       = "main-subnet-group"
-  subnet_ids = [aws_subnet.public_a.id, aws_subnet.public_b.id]
+  subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id]
 }
 
 resource "aws_db_instance" "postgres" {
@@ -175,5 +197,5 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name    = aws_db_subnet_group.main.name
   vpc_security_group_ids  = [aws_security_group.rds_sg.id]
   skip_final_snapshot     = true
-  publicly_accessible     = true
+  publicly_accessible     = false
 }
