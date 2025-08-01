@@ -1,3 +1,17 @@
+variable "db_username" {
+  description = "Database administrator username"
+  type        = string
+}
+variable "db_password" {
+  description = "Database administrator password"
+  type        = string
+  sensitive   = true # Mark the variable as sensitive
+}
+variable "region" {
+  description = "AWS region"
+  default     = "ap-southeast-2"
+}
+
 provider "aws" {
   region = var.region
 }
@@ -192,8 +206,8 @@ resource "aws_db_instance" "postgres" {
   engine                  = "postgres"
   engine_version          = "16.3"
   instance_class          = "db.t3.micro"
-  username                = "admin"
-  password                = "examplepassword"
+  username                = var.db_username
+  password                = var.db_password
   db_subnet_group_name    = aws_db_subnet_group.main.name
   vpc_security_group_ids  = [aws_security_group.rds_sg.id]
   skip_final_snapshot     = true
